@@ -5,14 +5,14 @@ export interface ArgumentMap {
 }
 
 /**
- * Check if an argument is a key-value pair `--key=value`.
+ * Check if an argument is a key-value pair `--key=value` or `--key`(=false).
  */
-const isPair = (arg: string): boolean => /^\-\-[a-z]+=/.test(arg);
+const isPair = (arg: string): boolean => /^\-[a-z-]+=/.test(arg);
 
 /**
  * Check if an argument is a key `-key`.
  */
-const isKey = (arg: string): boolean => /^\-[a-z]+$/.test(arg);
+const isKey = (arg: string): boolean => /^\-[a-z-]+$/.test(arg);
 
 /**
  * Parse an argv and map the result to an object.
@@ -32,31 +32,31 @@ const parseArgv = (argv: string[]): ArgumentMap => {
             // If a pair comes after a key,
             // the preceding one forms a pair with an empty value
             if (key) {
-                argm[ key ] = '';
+                argm[key] = '';
                 key = '';
             }
 
             const parts = arg.split('=');
 
             // map[ `--key` >> `key` ] = value
-            argm[ parts[0].substr(2) ] = parts[1];
+            argm[parts[0].substr(arg.startsWith('--') ? 2 : 1)] = parts[1];
         } else if (isKey(arg)) {
             // A key should start a new pair no matter what
 
             // If one key comes after another,
-            // the preceding one forms a pair with an empty value
+            // the preceding one forms a pair with the value is false
             if (key) {
-                argm[ key ] = '';
+                argm[key] = '';
             }
 
-            // `-key` >> `key`
-            key = arg.substr(1);
+            // `--?key` >> `key`
+            key = arg.substr(arg.startsWith('--') ? 2 : 1);
         } else {
             // A value should end a pair, if there is
 
             // A value must come after a key or it will get discarded
             if (key) {
-                argm[ key ] = arg;
+                argm[key] = arg;
                 key = '';
             }
         }

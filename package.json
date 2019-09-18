@@ -1,6 +1,6 @@
 {
   "name": "@dkh-dev/parse-argv",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Parse process arguments",
   "main": "index.js",
   "types": "index.d.ts",
@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "ts-node test --a=b -c d e -f \"g h\" -i=j --k l -m 0",
+    "test": "ts-node test --a=b -b -c d e --e -f \"g h\" -i=j --k l -m 0",
     "prepublishOnly": "npm run build & npm test"
   },
   "repository": {
