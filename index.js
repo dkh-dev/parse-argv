@@ -5,19 +5,20 @@ const isKey = (arg) => /^\-[a-z-]+$/.test(arg);
 const parseArgv = (argv) => {
     const argm = {};
     let key = '';
+    const closeCurrentPair = () => {
+        if (key) {
+            argm[key] = '';
+            key = '';
+        }
+    };
     argv.forEach(arg => {
         if (isPair(arg)) {
-            if (key) {
-                argm[key] = '';
-                key = '';
-            }
+            closeCurrentPair();
             const parts = arg.split('=');
             argm[parts[0].substr(arg.startsWith('--') ? 2 : 1)] = parts[1];
         }
         else if (isKey(arg)) {
-            if (key) {
-                argm[key] = '';
-            }
+            closeCurrentPair();
             key = arg.substr(arg.startsWith('--') ? 2 : 1);
         }
         else {
@@ -27,6 +28,7 @@ const parseArgv = (argv) => {
             }
         }
     });
+    closeCurrentPair();
     return argm;
 };
 exports.default = parseArgv;

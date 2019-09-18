@@ -24,17 +24,21 @@ const parseArgv = (argv: string[]): ArgumentMap => {
     // The last key found when iterating over argv
     let key = '';
 
+    const closeCurrentPair = () => {
+        // If a pair comes after a key,
+        // the preceding one forms a pair with an empty value
+        if (key) {
+            argm[key] = '';
+            key = '';
+        }
+    }
+
     argv.forEach(arg => {
         if (isPair(arg)) {
             // A key-value pair should start and end a new pair
             //     no matter what
 
-            // If a pair comes after a key,
-            // the preceding one forms a pair with an empty value
-            if (key) {
-                argm[key] = '';
-                key = '';
-            }
+            closeCurrentPair();
 
             const parts = arg.split('=');
 
@@ -43,11 +47,7 @@ const parseArgv = (argv: string[]): ArgumentMap => {
         } else if (isKey(arg)) {
             // A key should start a new pair no matter what
 
-            // If one key comes after another,
-            // the preceding one forms a pair with the value is false
-            if (key) {
-                argm[key] = '';
-            }
+            closeCurrentPair();
 
             // `--?key` >> `key`
             key = arg.substr(arg.startsWith('--') ? 2 : 1);
@@ -61,6 +61,8 @@ const parseArgv = (argv: string[]): ArgumentMap => {
             }
         }
     });
+
+    closeCurrentPair();
 
     return argm;
 };
