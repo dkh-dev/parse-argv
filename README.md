@@ -18,6 +18,7 @@ Example 1
 import parseArgv from '@dkh-dev/parse-argv';
 
 console.log(parseArgv(argv));
-// ts-node index.ts --a=b -c d e -f "g h" -i=j --k l -m 0
-// => { a: 'b', c: 'd', f: 'g h', m: '0' }
+
+// $ node test --a=b -b -c d e --e --f="g h" -i=j -j='k l' -l=123
+// => { a: 'b', b: true, c: 'd', e: true, f: 'g h', i: 'j', j: "'k", k: 123 }
 ````

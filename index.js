@@ -1,34 +1,61 @@
-'use strict';
-Object.defineProperty(exports, "__esModule", { value: true });
-const isPair = (arg) => /^\-[a-z-]+=/.test(arg);
-const isKey = (arg) => /^\-[a-z-]+$/.test(arg);
-const parseArgv = (argv) => {
-    const argm = {};
-    let key = '';
-    const closeCurrentPair = () => {
+'use strict'
+
+const isKey = arg => /^-[a-z-]+$/.test(arg)
+const isPair = arg => /^-[a-z-]+=/.test(arg)
+
+const sanitize = key => key.substr(key.startsWith('--') ? 2 : 1)
+const split = arg => {
+    const index = arg.indexOf('=')
+    const key = sanitize(arg.substr(0, index))
+    const value = arg.substr(index + 1)
+
+    return [ key, value ]
+}
+
+const parseArgv = argv => {
+    const argm = {}
+    let currentKey
+
+    const pair = (value = true, key = currentKey) => {
         if (key) {
-            argm[key] = '';
-            key = '';
+            let convertedValue
+
+            if (typeof value === 'string') {
+                if (value.startsWith("'") && value.endsWith("'")) {
+                    convertedValue = value.substr(1, value.length - 2)
+                } else {
+                    const num = Number(value)
+
+                    convertedValue = num.toString() === value ? num : value
+                }
+            } else {
+                convertedValue = value
+            }
+
+            argm[ key ] = convertedValue
+            currentKey = null
         }
-    };
+    }
+
     argv.forEach(arg => {
         if (isPair(arg)) {
-            closeCurrentPair();
-            const parts = arg.split('=');
-            argm[parts[0].substr(arg.startsWith('--') ? 2 : 1)] = parts[1];
+            pair()
+
+            const [ key, value ] = split(arg)
+
+            pair(value, key)
+        } else if (isKey(arg)) {
+            pair()
+
+            currentKey = sanitize(arg)
+        } else {
+            pair(arg)
         }
-        else if (isKey(arg)) {
-            closeCurrentPair();
-            key = arg.substr(arg.startsWith('--') ? 2 : 1);
-        }
-        else {
-            if (key) {
-                argm[key] = arg;
-                key = '';
-            }
-        }
-    });
-    closeCurrentPair();
-    return argm;
-};
-exports.default = parseArgv;
+    })
+
+    pair()
+
+    return argm
+}
+
+module.exports = parseArgv
