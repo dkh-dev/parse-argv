@@ -1,61 +1,62 @@
 'use strict'
 
-const isKey = arg => /^-[a-z-]+$/.test(arg)
-const isPair = arg => /^-[a-z-]+=/.test(arg)
 
-const sanitize = key => key.substr(key.startsWith('--') ? 2 : 1)
+// removes `--` or `-`
+const clean = name => name.substr(name.startsWith('--') ? 2 : 1)
+
+// split arg name and value by the first `=`
 const split = arg => {
-    const index = arg.indexOf('=')
-    const key = sanitize(arg.substr(0, index))
-    const value = arg.substr(index + 1)
+  const index = arg.indexOf('=')
+  const name = arg.substr(0, index)
+  const value = arg.substr(index + 1)
 
-    return [ key, value ]
+  return [ name, value ]
 }
 
+
 const parseArgv = argv => {
-    const argm = {}
-    let currentKey
+  const args = {}
 
-    const pair = (value = true, key = currentKey) => {
-        if (key) {
-            let convertedValue
+  let current
 
-            if (typeof value === 'string') {
-                if (value.startsWith("'") && value.endsWith("'")) {
-                    convertedValue = value.substr(1, value.length - 2)
-                } else {
-                    const num = Number(value)
+  // starts a `--name value` pair
+  const start = name => {
+    current = name
+  }
 
-                    convertedValue = num.toString() === value ? num : value
-                }
-            } else {
-                convertedValue = value
-            }
+  // ends the current name-value pair
+  const end = (value = true, name = current) => {
+    current = null
 
-            argm[ key ] = convertedValue
-            currentKey = null
-        }
+    if (!name) {
+      return
     }
 
-    argv.forEach(arg => {
-        if (isPair(arg)) {
-            pair()
+    const number = Number(value)
 
-            const [ key, value ] = split(arg)
+    args[ clean(name) ] = number.toString() === value ? number : value
+  }
 
-            pair(value, key)
-        } else if (isKey(arg)) {
-            pair()
+  argv.forEach(arg => {
+    if (!arg.startsWith('-')) {
+      // this might be a param value
+      return void end(arg)
+    }
 
-            currentKey = sanitize(arg)
-        } else {
-            pair(arg)
-        }
-    })
+    end()
 
-    pair()
+    if (!arg.includes('=')) {
+      return void start(arg)
+    }
 
-    return argm
+    const [ name, value ] = split(arg)
+
+    end(value, name)
+  })
+
+  end()
+
+  return args
 }
 
 module.exports = parseArgv

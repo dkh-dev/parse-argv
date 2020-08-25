@@ -1,0 +1,6 @@
+{
+  "extends": "@dkh-dev/eslint-config",
+  "rules": {
+    "max-statements": "off"
+  }
+}

@@ -1,5 +1,7 @@
 .vscode/
-data/
 node_modules/
+
+data/
+
 package-lock.json
 yarn.lock
