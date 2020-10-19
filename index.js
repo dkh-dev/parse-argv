@@ -17,6 +17,7 @@ const split = arg => {
 const parseArgv = argv => {
   const args = {}
 
+  let index = 0
   let current
 
   // starts a `--name value` pair
@@ -25,16 +26,21 @@ const parseArgv = argv => {
   }
 
   // ends the current name-value pair
-  const end = (value = true, name = current) => {
+  const end = (value = null, name = current) => {
     current = null
 
     if (!name) {
+      if (value) {
+        args[ index ] = value
+        index++
+      }
+
       return
     }
 
     const number = Number(value)
 
-    args[ clean(name) ] = number.toString() === value ? number : value
+    args[ clean(name) ] = number.toString() === value ? number : value || true
   }
 
   argv.forEach(arg => {
