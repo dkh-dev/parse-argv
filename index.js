@@ -17,50 +17,47 @@ const split = arg => {
 const parseArgv = argv => {
   const args = {}
 
-  let index = 0
+  // named arg
   let current
+  // auto-index
+  let index = 0
 
-  // starts a `--name value` pair
-  const start = name => {
+  // start of a `--name value` pair
+  const open = name => {
     current = name
   }
 
-  // ends the current name-value pair
-  const end = (value = null, name = current) => {
+  // end of the current name-value pair
+  const close = (content = true, name = current) => {
     current = null
 
-    if (!name) {
-      if (value) {
-        args[ index ] = value
-        index++
-      }
+    const key = name ? clean(name) : index++
 
-      return
-    }
+    const number = Number(content)
+    const value = number.toString() === content ? number : content
 
-    const number = Number(value)
-
-    args[ clean(name) ] = number.toString() === value ? number : value || true
+    args[ key ] = value
   }
 
   argv.forEach(arg => {
     if (!arg.startsWith('-')) {
-      // this might be a param value
-      return void end(arg)
+      return void close(arg)
     }
 
-    end()
+    if (current) {
+      close()
+    }
 
     if (!arg.includes('=')) {
-      return void start(arg)
+      return void open(arg)
     }
 
     const [ name, value ] = split(arg)
 
-    end(value, name)
+    close(value, name)
   })
 
-  end()
+  close()
 
   return args
 }

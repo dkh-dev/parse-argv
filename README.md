@@ -1,4 +1,4 @@
-# parseArgv
+# [@dkh-dev/parse-argv](https://www.npmjs.com/package/@dkh-dev/parse-argv)
 
 _Parse process arguments_
 
@@ -15,9 +15,9 @@ $ yarn install @dkh-dev/parse-argv
 ````typescript
 import parseArgv from '@dkh-dev/parse-argv';
 
-console.log(parseArgv(process.argv));
+console.log(parseArgv(process.argv.slice(2)));
 
-// $ node test --a=b -b -c d e --e --f="g h" -i=123 -j=/k l/ -k
+// $ node test parse --a=b -b -c d e --e --f="g h" -i=123 -j=/k l/ -k
 /* => {
         '0': 'parse',
         '1': 'e',

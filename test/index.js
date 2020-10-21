@@ -5,8 +5,8 @@ const test = require('tape')
 const parseArgv = require('..')
 
 
-//         --0=parse               --1=e                    --2=l/
 // $ node test parse --a=b -b -c d e --e --f="g h" -i=123 -j=/k l/ -k
+//          -0 parse                -1 e                     -2 l/
 
 test('parseArgv', t => {
   const argv = parseArgv(process.argv.slice(2))
