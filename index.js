@@ -36,7 +36,7 @@ const parseArgv = argv => {
     const number = Number(content)
     const value = number.toString() === content ? number : content
 
-    args[ key ] = value
+    args[ key ] = value === 'false' ? false : value
   }
 
   argv.forEach(arg => {
@@ -57,7 +57,9 @@ const parseArgv = argv => {
     close(value, name)
   })
 
-  close()
+  if (current) {
+    close()
+  }
 
   return args
 }

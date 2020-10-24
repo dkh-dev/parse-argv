@@ -1,6 +1,6 @@
 {
   "name": "@dkh-dev/parse-argv",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Parse process arguments",
   "main": "index.js",
   "files": [
@@ -11,7 +11,7 @@
     "tape": "^5.0.1"
   },
   "scripts": {
-    "test": "node test parse --a=b -b -c d e --e --f=\"g h\" -i=123 -j=/k l/ -k",
+    "test": "node test parse --a=b -b -c d e --e --f=\"g h\" -i=123 -j=/k l/ -k false",
     "prepublishOnly": "npm test"
   },
   "repository": {

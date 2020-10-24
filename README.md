@@ -17,7 +17,7 @@ import parseArgv from '@dkh-dev/parse-argv';
 
 console.log(parseArgv(process.argv.slice(2)));
 
-// $ node test parse --a=b -b -c d e --e --f="g h" -i=123 -j=/k l/ -k
+// $ node test parse --a=b -b -c d e --e --f="g h" -i=123 -j=/k l/ -k false
 /* => {
         '0': 'parse',
         '1': 'e',
@@ -29,7 +29,7 @@ console.log(parseArgv(process.argv.slice(2)));
         f: 'g h',
         i: 123,
         j: '/k',
-        k: true
+        k: false
       }
 */
 ````
