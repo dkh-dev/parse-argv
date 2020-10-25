@@ -13,6 +13,22 @@ const split = arg => {
   return [ name, value ]
 }
 
+const iterable = (argv, length) => {
+  // this creates an iterator to iterate over indexed args
+  const iterator = () => {
+    let index = 0
+
+    const next = () => {
+      const i = index++
+
+      return i < length ? { value: argv[ i ], done: false } : { done: true }
+    }
+
+    return { next }
+  }
+
+  Object.defineProperty(argv, Symbol.iterator, { value: iterator })
+}
 
 const parseArgv = argv => {
   const args = {}
@@ -59,6 +75,10 @@ const parseArgv = argv => {
 
   if (current) {
     close()
+  }
+
+  if (index > 0) {
+    iterable(args, index)
   }
 
   return args
