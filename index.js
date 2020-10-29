@@ -77,9 +77,7 @@ const parseArgv = argv => {
     close()
   }
 
-  if (index > 0) {
-    iterable(args, index)
-  }
+  iterable(args, index)
 
   return args
 }
